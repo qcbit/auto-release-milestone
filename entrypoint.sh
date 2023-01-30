@@ -1,5 +1,8 @@
-#!/bin/sh -l
+#!/bin/bash
 
-echo "Hello $1"
-time=$(date)
-echo "time=$time" >> $GITHUB_OUTPUT
+# Warn if undeclared variable is used
+set -u 
+
+echo "release-url::http://example.com" >> $GITHUB_OUTPUT
+
+exit 0
