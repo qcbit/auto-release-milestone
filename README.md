@@ -1,23 +1,34 @@
-# Hello world docker action
-
-This action prints "Hello World" to the log or "Hello" + the name of a person to greet. To learn how this action was built, see "[Creating a Docker container action](https://docs.github.com/en/actions/creating-actions/creating-a-docker-container-action)" in the GitHub Docs.
+# Auto Release Milestone
+A GitHub action that automatically drafts a GitHub release based on a newly closed milestone.
+The issues that were closed as part of the milestone will be used as the basis to generate the release notes.
 
 ## Inputs
-
-### `who-to-greet`
-
-**Required** The name of the person to greet. Default `"World"`.
+### `repo-token`
+**Required** The `GITHUB_TOKEN` used to access the current repository through the GitHub REST API.
 
 ## Outputs
-
-### `time`
-
-The time we greeted you.
+### `release-url`
+The URL of the GitHub release that was drafted. Defaults to an empty string.
 
 ## Example usage
+Here's an example of a workflow that litens for the `milestone:closed` event and automatically creates a release draft with the issues that were closed as release notes. It also prints the URL of the release page to the build log.
 
 ```yaml
-uses: actions/hello-world-docker-action@main
-with:
-  who-to-greet: 'Mona the Octocat'
+name: Test
+on:
+  milestone:
+    types: [closed]
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create a release draft for a milestone
+        id: create-release-milestone
+        uses: qcbit/auto-release-milestone@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Print the URL of the release draft
+        if: steps.create-release-milestone.outputs.release-url != ''
+        run: echo ${{ steps.create-release-draft.outputs.release-url }}
 ```
