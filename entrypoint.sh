@@ -28,6 +28,11 @@ release_url=$(dotnet gitreleasemanager create \
 --owner $owner \
 --repository $repository)
 
+if [ $? -ne q ]; then
+    echo "::error::Failed to create the release draft"
+    exit 1
+fi
+
 echo "release-url=$release_url" >> $GITHUB_OUTPUT
 
 exit 0
